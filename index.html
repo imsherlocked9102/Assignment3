@@ -1,38 +1,43 @@
 <!doctype html>
-<html lang="en" ng-app="NarrowItDownApp">
+<html lang="en">
   <head>
     <title>Narrow Down Your Menu Choice</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="styles/bootstrap.min.css">
     <link rel="stylesheet" href="styles/styles.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="angular.min.js"></script>
     <script src="app.js"></script>
   </head>
-<body>
-   <div class="container" ng-controller="NarrowItDownController as narrowCtrl">
-    <div class="row">
-      <h1>Narrow Down Your Chinese Menu Choice</h1>
+<body ng-app="NarrowItDownApp">
+   <div class="container" ng-controller="NarrowItDownController as menu">
+    <h1>Narrow Down Your Chinese Menu Choice</h1>
 
-      <div class="form-group">
-        <input type="text"
-               placeholder="search term"
-               class="form-control"
-               ng-model="narrowCtrl.query">
-      </div>
-      <div class="form-group narrow-button">
-        <button class="btn btn-primary"
-                ng-click="narrowCtrl.found()">Narrow It Down For Me!</button>
-      </div>
+    <div class="form-group">
+      <input type="text" placeholder="search term" class="form-control" ng-model="menu.searchTerm">
     </div>
-    <div class="row">
-      <!-- Bonus loader (see Bonus section of the assignment) -->
-      <items-loader-indicator></items-loader-indicator>
+    <div class="form-group narrow-button">
+      <button class="btn btn-primary" ng-click="menu.filterMenu()">Narrow It Down For Me!</button>
+    </div>
 
-      <!-- found-items should be implemented as a component -->
-      <found-items found-items="narrowCtrl.foundItems" on-remove="narrowCtrl.onRemove(index)"></found-items>
+    <!-- Bonus loader (see Bonus section of the assignment) -->
+    <!--<items-loader-indicator></items-loader-indicator> -->
+
+    <!-- found-items should be implemented as a component -->
+    <!-- <found-items found-items="...." on-remove="...."></found-items> -->
+    <found-items found-items="menu.found" on-remove="menu.removeItem(index)"></found-items>
+    <!--
+    <div class="menu">
+      <h3> Items found: {{menu.found.length}}</h3>
+      <ul>
+        <li ng-repeat="item in menu.found">
+          {{ item.name }}
+          <button ng-click="menu.removeItem($index);">Don't want this one!</button>
+        </li>
+      </ul>
     </div>
+  -->
   </div>
+
 
 </body>
 </html>
