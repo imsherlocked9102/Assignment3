@@ -1,67 +1,43 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #ffffff;
-    color: #ffffff;
-}
 
-.container {
-    width: 80%;
-    margin: 0 auto;
-    background: rgb(68, 68, 68);
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-}
-
-h1 {
-    text-align: center;
-    color: #33fff6;
-}
-
-input[type="text"] {
-    width: calc(100% - 150px);
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-button {
-    padding: 10px 20px;
-    margin: 10px 0;
-    background-color: #eb9898;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #a56401;
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-}
-
-li {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.remove-button {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.remove-button:hover {
-    background-color: #c82333;
-}
+  .loader {
+    display: block;
+    margin-left: 5px;
+    font-size: 10px;
+    float: left;
+    border-top: 1.1em solid rgba(147, 147, 147, 0.2);
+    border-right: 1.1em solid rgba(147, 147, 147, 0.2);
+    border-bottom: 1.1em solid rgba(147, 147, 147, 0.2);
+    border-left: 1.1em solid #676767;
+    -webkit-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-animation: load8 1.1s infinite linear;
+    animation: load8 1.1s infinite linear;
+  }
+  .loader,
+  .loader:after {
+    border-radius: 50%;
+    width: 3em;
+    height: 3em;
+  }
+  @-webkit-keyframes load8 {
+    0% {
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes load8 {
+    0% {
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    100% {
+      -webkit-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+  
