@@ -1,0 +1,9 @@
+<div class="row">
+  <ul class="list-group">
+    <li class="list-group-item" ng-repeat="item in foundItems">
+      <p><b>Name:</b> {{ item.name }}</p>
+      <p><b>Description:</b> {{ item.description }}</p>
+      <button class="btn btn-danger" ng-click="onRemove({index: $index})">Don't want this one!</button>
+    </li>
+  </ul>
+</div>
