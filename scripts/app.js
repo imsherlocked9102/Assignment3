@@ -1,72 +1,75 @@
-(function () {
-  'use strict';
-  angular.module('NarrowItDownApp', [])
-    .controller('NarrowItDownController', Controller1)
-    .directive('foundItems', FoundItemsDirective)
-    .service('MenuSearchService', menuSearchServices)
-    .constant('ApiBasePath', "https://davids-restaurant.herokuapp.com");
+(function() {
+    'use strict';
 
-  function FoundItemsDirective() {
-    var ddo = {
-      templateUrl: './foundItems.html', // fix path
-      scope: {
-        onRemove: '&',
-        found: '<'
-      },
-      controller: Controller1,
-      controllerAs: 'list',
-      bindToController: true
-    };
-    return ddo;
-  }
+    angular.module('NarrowItDownApp', [])
+        .controller('NarrowItDownController', NarrowItDownController)
+        .service('MenuSearchService', MenuSearchService)
+        .constant('ApiBasePath', "https://coursera-jhu-default-rtdb.firebaseio.com")
+        .directive('foundItems', FoundItems);
 
-  Controller1.$inject = ['MenuSearchService', '$http', 'ApiBasePath'];
-  function Controller1(MenuSearchService) {
-    var syntax = this;
-        syntax.loader = false;
+    function FoundItems() {
+        var ddo = {
+            restrict: 'E',
+            templateUrl: 'foundItems.html',
+            scope: {
+                foundItems: '<',
+                onEmpty: '<',
+                onRemove: '&'
+            },
+            controller: NarrowItDownController,
+            controllerAs: 'menu',
+            bindToController: true
+        };
 
-    syntax.searchMethod = function (val) {
-      syntax.loader = true;
-      if (val === undefined) {
-        console.error('Error. Please search for something...');
-        syntax.loader = false;
-      } else {
-          MenuSearchService.getMatchedMenuItems(val.trim())
-            .then(function(res) {
-              syntax.found = res;
-              syntax.loader = false;
-            })
-            .catch(function (error) {
-              console.log(error);
-              syntax.loader = false;
-            });
-          syntax.removeItem = function(index) {
-            syntax.found.splice(index, 1);
-          }
-      }
+        return ddo;
     }
 
-  }
+    NarrowItDownController.$inject = ['MenuSearchService'];
 
-  function menuSearchServices($http, ApiBasePath) {
-    var service = this;
-      service.getMatchedMenuItems = function (searchTerm) {
-        return $http({
-          method: "GET",
-          url: (ApiBasePath + "/menu_items.json")
-        })
-        .then(function (result) {
-          var foundItems = result.data.menu_items, found = [];
-            for (let i = 0; i < foundItems.length; i++) {
-              if (foundItems[i].description.toLowerCase().indexOf(searchTerm) !== -1) {
-                found.push(foundItems[i]);
+    function NarrowItDownController(MenuSearchService) {
+        var menu = this;
+        menu.shortName = '';
+
+        menu.matchedMenuItems = function(searchTerm) {
+            var promise = MenuSearchService.getMatchedMenuItems(searchTerm);
+
+            promise.then(function(items) {
+                if (items && items.length > 0) {
+                    menu.message = '';
+                    menu.found = items;
+                } else {
+                    menu.message = 'Nothing found!';
+                    menu.found = [];
+                }
+            }).catch(function(error){console.log(error)});
+        };
+
+        menu.removeMenuItem = function(itemIndex) {
+            menu.found.splice(itemIndex, 1);
+        }
+    }
+
+    MenuSearchService.$inject = ['$http', 'ApiBasePath'];
+
+    function MenuSearchService($http, ApiBasePath) {
+        var service = this;
+
+        service.getMatchedMenuItems = function (searchTerm) {
+          var response = $http({
+            method: "GET",
+            url: (ApiBasePath + "/menu_items.json")
+          });
+      
+          return response.then(function (result) {
+              var searchItems = [];
+              var data = result.data;
+        
+              for (var category in data) {
+                  searchItems.push( data[category].menu_items.filter( item => item.description.toLowerCase().includes(searchTerm.toLowerCase()) )
+                  );
               }
-            }
-          return found;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-      }
-  }
+              return searchItems.flat();
+          });
+        };
+    }
 })();
