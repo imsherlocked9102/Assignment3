@@ -1,72 +1,82 @@
 (function () {
-  'use strict';
-  angular.module('NarrowItDownApp', [])
-    .controller('NarrowItDownController', Controller1)
-    .directive('foundItems', FoundItemsDirective)
-    .service('MenuSearchService', menuSearchServices)
-    .constant('ApiBasePath', "https://davids-restaurant.herokuapp.com");
+    'use strict';
 
-  function FoundItemsDirective() {
-    var ddo = {
-      templateUrl: './foundItems.html', // fix path
-      scope: {
-        onRemove: '&',
-        found: '<'
-      },
-      controller: Controller1,
-      controllerAs: 'list',
-      bindToController: true
-    };
-    return ddo;
-  }
+    angular.module('NarrowItDownApp', [])
+    .controller('NarrowItDownController', NarrowItDownController)
+    .service('MenuSearchService', MenuSearchService)
+    .directive('foundItems', FoundItemsDirective);
 
-  Controller1.$inject = ['MenuSearchService', '$http', 'ApiBasePath'];
-  function Controller1(MenuSearchService) {
-    var syntax = this;
-        syntax.loader = false;
+    NarrowItDownController.$inject = ['MenuSearchService'];
+    function NarrowItDownController(MenuSearchService) {
+        var narrowCtrl = this;
+        narrowCtrl.searchTerm = "";
+        narrowCtrl.found = [];
 
-    syntax.searchMethod = function (val) {
-      syntax.loader = true;
-      if (val === undefined) {
-        console.error('Error. Please search for something...');
-        syntax.loader = false;
-      } else {
-          MenuSearchService.getMatchedMenuItems(val.trim())
-            .then(function(res) {
-              syntax.found = res;
-              syntax.loader = false;
-            })
-            .catch(function (error) {
-              console.log(error);
-              syntax.loader = false;
+        narrowCtrl.narrowItDown = function () {
+            if (narrowCtrl.searchTerm === "") {
+                narrowCtrl.found = [];
+                return;
+            }
+
+            MenuSearchService.getMatchedMenuItems(narrowCtrl.searchTerm)
+            .then(function (items) {
+                narrowCtrl.found = items;
             });
-          syntax.removeItem = function(index) {
-            syntax.found.splice(index, 1);
-          }
-      }
+        };
+
+        narrowCtrl.removeItem = function (index) {
+            narrowCtrl.found.splice(index, 1);
+        };
     }
 
-  }
+    MenuSearchService.$inject = ['$http'];
+    function MenuSearchService($http) {
+        var service = this;
 
-  function menuSearchServices($http, ApiBasePath) {
-    var service = this;
-      service.getMatchedMenuItems = function (searchTerm) {
-        return $http({
-          method: "GET",
-          url: (ApiBasePath + "/menu_items.json")
-        })
-        .then(function (result) {
-          var foundItems = result.data.menu_items, found = [];
-            for (let i = 0; i < foundItems.length; i++) {
-              if (foundItems[i].description.toLowerCase().indexOf(searchTerm) !== -1) {
-                found.push(foundItems[i]);
-              }
-            }
-          return found;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-      }
-  }
+        service.getMatchedMenuItems = function (searchTerm) {
+            return $http({
+                method: "GET",
+                url: "https://coursera-jhu-default-rtdb.firebaseio.com/menu_items.json"
+            }).then(function (response) {
+                var foundItems = [];
+                var menuItems = response.data;
+
+                for (var category in menuItems) {
+                    if (menuItems.hasOwnProperty(category)) {
+                        var items = menuItems[category].menu_items;
+                        for (var i = 0; i < items.length; i++) {
+                            if (items[i].description.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
+                                foundItems.push(items[i]);
+                            }
+                        }
+                    }
+                }
+
+                return foundItems;
+            });
+        };
+    }
+
+    function FoundItemsDirective() {
+        var ddo = {
+            templateUrl: 'foundItems.html',
+            scope: {
+                items: '<',
+                onRemove: '&'
+            },
+            controller: FoundItemsDirectiveController,
+            controllerAs: 'list',
+            bindToController: true
+        };
+
+        return ddo;
+    }
+
+    function FoundItemsDirectiveController() {
+        var list = this;
+
+        list.isEmpty = function () {
+            return list.items.length === 0;
+        };
+    }
 })();
