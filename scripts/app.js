@@ -4,7 +4,7 @@
     .controller('NarrowItDownController', Controller1)
     .directive('foundItems', FoundItemsDirective)
     .service('MenuSearchService', menuSearchServices)
-    .constant('ApiBasePath', "https://davids-restaurant.herokuapp.com");
+    .constant('ApiBasePath', "https://coursera-jhu-default-rtdb.firebaseio.com");
 
   function FoundItemsDirective() {
     var ddo = {
