@@ -3,7 +3,7 @@
   angular
     .module('NarrowItDownApp')
     .directive('foundItems', foundItemsDirective)
-
+  
     function foundItemsDirective() {
       var ddo = {
         restrict: 'E',
