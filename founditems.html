@@ -1,0 +1,13 @@
+<ol>
+  <li ng-repeat="item in narrowCtrl.foundItems">
+    <div ng-if="item.short_name !== 'Nothing Found'">
+      ({{ item.short_name }}){{ item.name }} <br>
+      {{ item.description }}
+      <button class="btn btn-primary"
+              ng-click="narrowCtrl.onRemove({index: $index});">Don't want this one!</button>
+    </div>
+    <div ng-if="item.short_name === 'Nothing Found'">
+      {{ item.short_name }}
+    </div>
+  </li>
+</ol>
