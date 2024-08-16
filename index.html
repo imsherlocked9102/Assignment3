@@ -1,48 +1,28 @@
 <!DOCTYPE html>
-<html ng-app="NarrowItDownApp">
+<html ng-app="NarrowItDownApp" lang="en">
   <head>
-    <meta charset="utf-8">
+    <title>Narrow Down Your Menu Choice</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="./styles/bootstrap.min.css">
     <link rel="stylesheet" href="./styles/style.css">
     <script src="./scripts/angular.min.js"></script>
     <script src="./scripts/app.js"></script>
-    <title>Narrow Down Your Menu Choice</title>
   </head>
-  <body>
-    <div class="container mt-4">
-      <div class="row">
-        <div class="col">
-          <div class="card">
-            <div class="card-header">
-              Narrow Down Your Chinese Menu Choice
-            </div>
-            <div class="card-body">
-              <div class="row" ng-controller="NarrowItDownController as syntax">
-
-                <div class="col">
-                  <div class="form-group">
-                    <input type="text" placeholder="search term" ng-model="searchItem" class="form-control">
-                  </div>
-                </div>
-
-                <div class="col">
-                  <div class="form-group narrow-button">
-                    <button class="btn btn-primary" ng-click="syntax.searchMethod(searchItem);">Narrow It Down For Me!</button>
-                  </div>
-                </div>
-
-                <div class="col-md-12">
-                  <div class="loader" ng-if="syntax.loader"></div>
-                  <found-items 
-                      found="syntax"
-                      on-remove="syntax.removeItem(index)">
-                  </found-items>
-                </div>
-              </div> 
-            </div>
-          </div>
-        </div>
-      </div>
+<body ng-controller='NarrowItDownController as narrowCtrl'>
+   <div class="container sp-card">
+    <h1>Narrow Down Your Chinese Menu Choice</h1>
+    <hr/>
+    <div class="form-group">
+      <input ng-model="narrowCtrl.searchTerm" type="text" placeholder="Enter : Noodle, Egg, Chow Mein, etc" class="form-control">
     </div>
-  </body>
+    <div class="form-group narrow-button">
+      <button ng-click="narrowCtrl.search()" class="btn btn-success">Narrow It Down For Me!</button>
+    </div>
+  </div>
+  
+  <div class="container sp-card">
+    <found-items items="narrowCtrl.found" on-remove="narrowCtrl.remove(index)">
+    </found-items>
+  </div>
+</body>
 </html>
